@@ -1,2 +1,3 @@
-# vergo
-upgrade version follow semver
+# vitdoc-plugins
+
+plugins for [vitdoc](https://github.com/vitdocjs/vitdoc)

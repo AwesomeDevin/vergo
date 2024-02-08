@@ -1,0 +1,42 @@
+{
+  "name": "vergo",
+  "version": "0.0.1-beta.10",
+  "description": "support update project version follow semver",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "bin": {
+    "vergo": "./bin/index.js"
+  },
+  "scripts": {
+    "build": "unbuild",
+    "pub": "node ./bin/index.js run -b && npm publish --access public",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AwesomeDevin/lzd-seller-plugins.git"
+  },
+  "keywords": [
+    "vergo"
+  ],
+  "author": "AwesomeDevin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AwesomeDevin/lzd-seller-plugins/issues"
+  },
+  "homepage": "https://github.com/AwesomeDevin/lzd-seller-plugins#readme",
+  "dependencies": {
+    "consola": "^3.2.3",
+    "commander": "^12.0.0",
+    "esbuild-resolve-config": "^1.0.9",
+    "fs-extra": "^11.2.0",
+    "ice-npm-utils": "^3.0.3",
+    "semver": "^7.6.0",
+    "yargs-parser": "^21.1.1"
+  }
+}
