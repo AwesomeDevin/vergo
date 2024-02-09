@@ -15,9 +15,9 @@ export interface Config {
    */
   set?: string;
   /**
-   * enable def mode
+   * main branch of the repo
    */
-  def: boolean
+  mainBranch?: string;
 }
 
 

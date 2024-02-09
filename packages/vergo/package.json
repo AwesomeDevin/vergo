@@ -1,7 +1,7 @@
 {
   "name": "vergo",
-  "version": "0.0.2",
-  "description": "support update project version follow semver",
+  "version": "0.0.1-beta.10",
+  "description": "Upgrade your version like fool follow semver",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -40,5 +40,6 @@
     "semver": "^7.6.0",
     "yargs-parser": "^21.1.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+  }
 }
