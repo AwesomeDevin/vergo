@@ -1,6 +1,6 @@
 {
   "name": "vergo",
-  "version": "0.0.1-beta.10",
+  "version": "0.0.1",
   "description": "support update project version follow semver",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -31,12 +31,14 @@
   },
   "homepage": "https://github.com/AwesomeDevin/lzd-seller-plugins#readme",
   "dependencies": {
-    "consola": "^3.2.3",
+    "@manypkg/get-packages": "^2.2.0",
     "commander": "^12.0.0",
+    "consola": "^3.2.3",
     "esbuild-resolve-config": "^1.0.9",
     "fs-extra": "^11.2.0",
     "ice-npm-utils": "^3.0.3",
     "semver": "^7.6.0",
     "yargs-parser": "^21.1.1"
-  }
+  },
+  "devDependencies": {}
 }
