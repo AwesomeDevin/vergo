@@ -7,11 +7,7 @@ import { vergoCliLogger } from './tools/log';
 
 export default  function initCommand(fnConfig: UserConfig){
 
-  vergoCliLogger.start('start')
-
   const pkg = require('../package.json');
-
-  vergoCliLogger.await('init config')
 
   program
     .name(pkg.name)
@@ -25,11 +21,17 @@ export default  function initCommand(fnConfig: UserConfig){
 
     .action(async(config: UserConfig) => {
 
+      vergoCliLogger.start('start')
+
+
       const defaultConfig: Config = {
         registry: process.env.REGISTRY || DEFAULT_REGISTRY,
         beta: process.env.BETA === 'true' || DEFAULT_IS_BETA, 
         mainBranch: config.mainBranch || process.env.MAIN_BRANCH || await getMainBranch() || DEFAULT_MAIN_BRANCH
       }
+
+      vergoCliLogger.await('init config')
+
 
       const runConfig = {
         ...defaultConfig,
