@@ -1,6 +1,6 @@
 {
   "name": "vergo",
-  "version": "0.0.1-beta.23",
+  "version": "0.0.1-beta.24",
   "description": "Upgrade your version like fool follow semver",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
