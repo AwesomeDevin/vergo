@@ -46,6 +46,13 @@ export default async function run(commandConfig: Config) {
 
     const updatePackages = waitForUpdatePackages.filter(pkg => pkg.isDiff)
 
+    if (!updatePackages.length) {
+      asvCliLogger.success('No packages need to be updated')
+      return
+    }else{
+      asvCliLogger.success('Packages need to be updated: ' + updatePackages.map(pkg => pkg.packageJson.name).join(', '))
+    }
+
     for (const pkg of updatePackages) {
       await updatePackageVersion({
         packagePath: path.join(pkg.dir, 'package.json'),
