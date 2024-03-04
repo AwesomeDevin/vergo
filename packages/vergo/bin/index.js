@@ -11,6 +11,7 @@ program.command('run')
   .option('-r, --registry <registry>', 'npm registry')
   .option('-b, --beta', 'is beta version')
   .option('-s, --set <version>', 'set version')
+  .option('-m, --mainBranch <branch>', 'main branch')
 
   .action((config) => {
     run(config).then(() => {

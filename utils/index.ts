@@ -1,7 +1,3 @@
-import isMonorepo from "./is-monorepo";
-import Logger from './logger'
+export * from "./monorepo";
+export * from './logger'
 
-export {
-  isMonorepo,
-  Logger
-}

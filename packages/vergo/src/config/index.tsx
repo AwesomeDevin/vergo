@@ -7,7 +7,7 @@ export interface Config {
    */
   registry: string;
   /**
-   * is this a beta release
+   * Is this a beta release
    */
   beta: boolean;
   /**
@@ -15,9 +15,21 @@ export interface Config {
    */
   set?: string;
   /**
-   * main branch of the repo
+   * Main branch of the repo
    */
-  mainBranch?: string;
+  mainBranch: string;
+  /**
+   * Changelog tagPrefix
+   */
+  tagPrefix?: string;
+  /**
+   * Should the log be appended to existing data.
+   */
+  append?: string
+  /**
+   * Set to 0 to regenerate all.
+   */
+  releaseCount?: number
 }
 
 

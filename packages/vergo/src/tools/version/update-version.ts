@@ -1,6 +1,6 @@
 import { getVersions } from 'ice-npm-utils';
 import semver from 'semver';
-import { asvCliLogger } from './log';
+import { asvCliLogger } from '../log';
 
 
 export type VersionType = 'patch' | 'beta';

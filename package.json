@@ -5,7 +5,13 @@
     "pub": "pnpm -r  --parallel pub"
   },
   "devDependencies": {
+    "@manypkg/get-packages": "^2.2.0",
     "@types/node": "^20.11.6",
+    "consola": "^3.2.3",
+    "conventional-changelog-cli": "^4.1.0",
+    "nodemon": "^3.0.3",
+    "standard-version": "^9.5.0",
+    "ts-node": "^10.9.2",
     "unbuild": "^2.0.0"
   },
   "dependencies": {
