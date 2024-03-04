@@ -61,7 +61,6 @@ export async function getPackages(diffFiles: string[]) {
     ...pkg,
     isDiff: diffFiles.some(file => file.startsWith(pkg.dir))
   }))
-
   return packages
 }
 

@@ -22,7 +22,7 @@ export const getCurPackage = async (path: string) => {
 export const getWorkspaceInfo: (path: string) => Promise<Packages> = (path: string) => {
   return new Promise((resolve,reject)=>{
     getPackages(path).then(res=>{
-      return res
+      return resolve(res)
     })
     .catch(()=>{
       resolve(getCurPackage(path))
