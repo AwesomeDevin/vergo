@@ -13,7 +13,7 @@ export default async (pkgJSON: { name: string, version: string }, type: VersionT
   try {
     versions = await getVersions(name, registry);
   } catch (e: any) {
-    vergoCliLogger.warn('Find Versions Error:' + e.message);
+    vergoCliLogger.warn('Find Versions Error: ' + e.message);
   }
 
   const stableVersions = versions.filter((version) => {
