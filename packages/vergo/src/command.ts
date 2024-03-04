@@ -11,11 +11,7 @@ export default  function initCommand(fnConfig: UserConfig){
 
   const pkg = require('../package.json');
 
-
   vergoCliLogger.await('init config')
-
-
-
 
   program
     .name(pkg.name)
@@ -28,8 +24,6 @@ export default  function initCommand(fnConfig: UserConfig){
     .option('-m, --mainBranch <branch>', 'main branch')
 
     .action(async(config: UserConfig) => {
-
-
 
       const defaultConfig: Config = {
         registry: process.env.REGISTRY || DEFAULT_REGISTRY,
@@ -44,7 +38,6 @@ export default  function initCommand(fnConfig: UserConfig){
       }
 
       vergoCliLogger.complete('init config')
-
 
       // registry
       vergoCliLogger.log('registry: ' + runConfig.registry)
