@@ -1,5 +1,5 @@
 {
-  "name": "vitedoc-plugins",
+  "name": "vergo",
   "scripts": {
     "build": "pnpm -r  --parallel build",
     "pub": "pnpm -r  --parallel pub"
@@ -12,9 +12,11 @@
     "nodemon": "^3.0.3",
     "standard-version": "^9.5.0",
     "ts-node": "^10.9.2",
-    "unbuild": "^2.0.0"
+    "unbuild": "^2.0.0",
+    "vergo": "workspace:*"
   },
   "dependencies": {
+    "fs-extra": "^11.2.0",
     "cross-env": "^7.0.3"
   }
 }

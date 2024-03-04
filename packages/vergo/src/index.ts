@@ -33,7 +33,7 @@ export default async function run(commandConfig: Config) {
     beta,
     set,
     mainBranch,
-    append
+    // append
   } = finalConfig;
 
 

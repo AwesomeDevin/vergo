@@ -1,8 +1,8 @@
-import updateVersion, { VersionType } from "./update-version";
-import { readFile, writeJSON } from "fs-extra";
-import { getWorkspaceInfo } from '../../../../../utils/monorepo'
 import { Package } from "@manypkg/get-packages";
+import { readFile, writeJSON } from "fs-extra";
+import { getWorkspaceInfo } from '../../../../../utils/monorepo';
 import { PWD_PATH } from "../../config/constant";
+import updateVersion, { VersionType } from "./update-version";
 
 
 /**

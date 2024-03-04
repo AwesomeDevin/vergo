@@ -11,6 +11,9 @@ importers:
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
+      fs-extra:
+        specifier: ^11.2.0
+        version: 11.2.0
     devDependencies:
       '@manypkg/get-packages':
         specifier: ^2.2.0
@@ -36,6 +39,9 @@ importers:
       unbuild:
         specifier: ^2.0.0
         version: 2.0.0(typescript@5.3.3)
+      vergo:
+        specifier: workspace:*
+        version: link:packages/vergo
 
   packages/vergo:
     dependencies:
