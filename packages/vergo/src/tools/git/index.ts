@@ -11,9 +11,8 @@ export async function diffBranch(defaultBranch) {
   const { $ } = await import('execa')
   const { stdout } = await $`git diff --name-only origin/${defaultBranch}`
 
-  console.log('stdout',stdout)
   const pwdPath = PWD_PATH
-  return stdout.split('\n').map(item => `${pwdPath}/${item}`)
+  return stdout.length ? stdout.split('\n').map(item => `${pwdPath}/${item}`) : []
 }
 
 
