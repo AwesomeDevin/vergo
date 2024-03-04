@@ -19,6 +19,7 @@ export async function initGifRemote(remoteUrl?: string){
       return 
     }
     const { $ } = await import('execa')
+    await $`git init`
     await $`git remote add origin ${remoteUrl}`
     vergoCliLogger.log('git remote added')
   }

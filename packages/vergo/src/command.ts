@@ -1,39 +1,53 @@
 import { program } from 'commander';
-import { Config, UserConfig } from "./config";
+import resolveConfig, { Config, UserConfig } from "./config";
 import { DEFAULT_IS_BETA, DEFAULT_MAIN_BRANCH, DEFAULT_REGISTRY } from "./config/constant";
 import run from './run';
-import { getMainBranch } from './tools/git';
+import { getMainBranch, initGifRemote } from './tools/git';
 import { vergoCliLogger } from './tools/log';
 
 
 export async function action( commandConfig: UserConfig){
+
   vergoCliLogger.start('start')
 
   vergoCliLogger.await('init config')
 
-  const defaultConfig: Config = {
+  const defaultConfig: UserConfig = {
     registry: process.env.REGISTRY || DEFAULT_REGISTRY,
     beta: process.env.BETA === 'true' || DEFAULT_IS_BETA, 
-    mainBranch: commandConfig.mainBranch || process.env.MAIN_BRANCH || await getMainBranch() || DEFAULT_MAIN_BRANCH
   }
 
-  const runConfig = {
+
+  const unResolvedConfig = {
     ...defaultConfig,
     ...commandConfig,
   }
 
+  const runConfig = resolveConfig(unResolvedConfig)
+
+  await initGifRemote(runConfig.remoteUrl)
+
+  const mainBranch = commandConfig.mainBranch || process.env.MAIN_BRANCH || await getMainBranch() || DEFAULT_MAIN_BRANCH
+
+  const resolvedConfig: Config = {
+    ...runConfig,
+    mainBranch
+  }
+
+
   vergoCliLogger.complete('init config')
 
   // registry
-  vergoCliLogger.log('registry: ' + runConfig.registry)
+  vergoCliLogger.log('registry: ' + resolvedConfig.registry)
 
    // main branch
-  vergoCliLogger.log('main branch: ' + defaultConfig.mainBranch)
+  vergoCliLogger.log('main branch: ' + resolvedConfig.mainBranch)
 
   // beta
-  vergoCliLogger.log('beta: ' + runConfig.beta)
+  vergoCliLogger.log('beta: ' + resolvedConfig.beta)
 
-  run(runConfig).then(() => {
+
+  run(resolvedConfig).then(() => {
     process.exit(0);
   })
 }

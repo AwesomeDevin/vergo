@@ -1,5 +1,5 @@
 import * as path from "path";
-import resolveConfig, { Config } from "./config";
+import { Config } from "./config";
 import { diffBranch, initGifRemote } from "./tools/git";
 import { vergoCliLogger } from "./tools/log";
 import { getPackages, updatePackageVersion } from "./tools/version";
@@ -9,9 +9,8 @@ import { VersionType } from "./tools/version/update-version";
 export * from './config/constant';
 
 
-export default async function run(commandConfig: Config) {
+export default async function run(runConfig: Config) {
 
-  const finalConfig = resolveConfig(commandConfig)
 
   const {
     registry,
@@ -20,7 +19,7 @@ export default async function run(commandConfig: Config) {
     mainBranch,
     remoteUrl,
     // append
-  } = finalConfig;
+  } = runConfig;
 
 
   try {
