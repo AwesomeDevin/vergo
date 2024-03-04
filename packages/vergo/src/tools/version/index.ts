@@ -57,7 +57,6 @@ export async function getNewVersion({
  */
 export async function getPackages(diffFiles: string[]) {
   const workspaceInfo = await getWorkspaceInfo(PWD_PATH)
-  console.log('diffFiles',diffFiles)
   const packages: (Package & { isDiff: boolean })[] = workspaceInfo.packages.map(pkg => ({
     ...pkg,
     isDiff: diffFiles.some(file => file.startsWith(pkg.dir))
