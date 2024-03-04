@@ -1,22 +1,44 @@
-import { consola as log } from 'consola'
+import signale from 'signale'
 
 
 
-function info(message: string) {
-  log.box((` ${this.name} `) + ' ' + (message))
+function complete(message: string) {
+  signale.complete((`[${this.name}] `) + (message))
 }
 
-function success(message: string) {
-  log.success((message))
-}
 
 function warn(message: string) {
-  log.warn((message))
+  signale.warning((`[${this.name}] `) + (message))
 }
 
 function error(message: string) {
-  log.error(new Error(message))
+  signale.error((`[${this.name}] `) + new Error(message))
 }
+
+function log(message: string) {
+  signale.log((`[${this.name}] `) + (message))
+}
+
+function start(message: string){
+  signale.start((`[${this.name}] `) + message)
+}
+
+function pending(message: string){
+  signale.pending((`[${this.name}] `) + message)
+}
+
+function success(message: string) {
+  signale.success((`[${this.name}] `) + (message))
+}
+
+function awaiter(message: string){
+  signale.await((`[${this.name}] `) + message)
+}
+
+function note(message: string){
+  signale.note((`[${this.name}] `) + message)
+}
+
 
 export default class Logger {
   name: string
@@ -25,8 +47,14 @@ export default class Logger {
     this.name = name
   }
 
-  public info = info
+  public complete = complete
   public success = success
   public warn = warn
   public error = error
+  public log = log
+  public start = start
+  public pending = pending
+  public await = awaiter
+  public note = note
+
 }
