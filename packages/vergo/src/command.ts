@@ -9,14 +9,13 @@ import { vergoCliLogger } from './tools/log';
 export async function action( commandConfig: UserConfig){
   vergoCliLogger.start('start')
 
+  vergoCliLogger.await('init config')
+
   const defaultConfig: Config = {
     registry: process.env.REGISTRY || DEFAULT_REGISTRY,
     beta: process.env.BETA === 'true' || DEFAULT_IS_BETA, 
     mainBranch: commandConfig.mainBranch || process.env.MAIN_BRANCH || await getMainBranch() || DEFAULT_MAIN_BRANCH
   }
-
-  vergoCliLogger.await('init config')
-
 
   const runConfig = {
     ...defaultConfig,
