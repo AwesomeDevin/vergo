@@ -1,6 +1,6 @@
 import { getVersions } from 'ice-npm-utils';
 import semver from 'semver';
-import { asvCliLogger } from '../log';
+import { vergoCliLogger } from '../log';
 
 
 export type VersionType = 'patch' | 'beta';
@@ -13,7 +13,7 @@ export default async (pkgJSON: { name: string, version: string }, type: VersionT
   try {
     versions = await getVersions(name, registry);
   } catch (e: any) {
-    asvCliLogger.warn('Find Versions Error:' + e.message);
+    vergoCliLogger.warn('Find Versions Error:' + e.message);
   }
 
   const stableVersions = versions.filter((version) => {
@@ -33,7 +33,7 @@ export default async (pkgJSON: { name: string, version: string }, type: VersionT
 
   if (notReleasedAndNoBeta || notReleasedAndBeta) {
     // 传入版本号未发布，且符合要发的版本号规范，直接使用传入版本号
-    asvCliLogger.success(`Project version unpublished, no update occurred, type: ${type}, version: ${version}`);
+    vergoCliLogger.success(`Project version unpublished, no update occurred, type: ${type}, version: ${version}`);
     return version;
   }
 
@@ -55,6 +55,6 @@ export default async (pkgJSON: { name: string, version: string }, type: VersionT
       // 传入版本号未发布，直接使用传入版本号
     }
   }
-  asvCliLogger.success(`type: ${type}, Update ${version} to ${newVersion}`);
+  vergoCliLogger.success(`type: ${type}, Update ${version} to ${newVersion}`);
   return newVersion;
 }

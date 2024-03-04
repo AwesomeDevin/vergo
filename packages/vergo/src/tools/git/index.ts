@@ -15,6 +15,18 @@ export async function diffBranch(defaultBranch) {
   return stdout.length ? stdout.split('\n').map(item => `${pwdPath}/${item}`) : []
 }
 
+/**
+ * get main branch
+ * @returns main branch
+ */
+export async function getMainBranch(){
+  const { $ } = await import('execa')
+  const { stdout } = await $`git remote show origin`
+  const mainBranch = stdout.match(/HEAD branch: (.*)/)?.[1]
+  return mainBranch
+
+}
+
 
 /**
  * write to CHANGELOG.md 

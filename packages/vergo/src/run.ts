@@ -1,7 +1,7 @@
 import * as path from "path";
 import resolveConfig, { Config } from "./config";
 import { diffBranch } from "./tools/git";
-import { asvCliLogger } from "./tools/log";
+import { vergoCliLogger } from "./tools/log";
 import { getPackages, updatePackageVersion } from "./tools/version";
 import { VersionType } from "./tools/version/update-version";
 
@@ -32,10 +32,10 @@ export default async function run(commandConfig: Config) {
     const updatePackages = waitForUpdatePackages.filter(pkg => pkg.isDiff)
 
     if (!updatePackages.length) {
-      asvCliLogger.success('No packages need to be updated')
+      vergoCliLogger.log('No packages need to be updated')
       return
     }else{
-      asvCliLogger.success('Packages need to be updated: ' + updatePackages.map(pkg => pkg.packageJson.name).join(', '))
+      vergoCliLogger.log('Packages need to be updated: ' + updatePackages.map(pkg => pkg.packageJson.name).join(', '))
     }
 
     for (const pkg of updatePackages) {
@@ -51,7 +51,7 @@ export default async function run(commandConfig: Config) {
       // })
     }
   } catch (e: any) {
-    asvCliLogger.error('[vergo] error:' + e.message);
+    vergoCliLogger.error( e.message);
   }
 
 }

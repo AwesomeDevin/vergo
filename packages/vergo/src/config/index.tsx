@@ -1,6 +1,5 @@
 import { resolveConfig as esBuildResolveConfig } from "esbuild-resolve-config";
 
-
 export interface Config {
   /**
    * The registry to publish to
@@ -32,10 +31,14 @@ export interface Config {
   releaseCount?: number
 }
 
+export type UserConfig = Partial<Config>
+
+
+
 
 export default function resolveConfig(commandConfig): Config {
 
-  const userConfig: Partial<Config> = esBuildResolveConfig<Config>(".vergorc", {}) || {}
+  const userConfig = esBuildResolveConfig<UserConfig>(".vergorc", {}) || {}
 
   const config = {
     ...commandConfig,

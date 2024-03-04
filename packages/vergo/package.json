@@ -1,6 +1,6 @@
 {
   "name": "vergo",
-  "version": "0.0.1-beta.17",
+  "version": "0.0.1-beta.19",
   "description": "Upgrade your version like fool follow semver",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -15,7 +15,7 @@
   "scripts": {
     "dev": "nodemon --ignore dist/ -e ts,js ./dev.js",
     "build": "unbuild",
-    "pub": "node ./bin/index.js run -b && npm publish --access public",
+    "pub": "node ./bin/index.js run -b -m main && npm publish --access public",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -41,6 +41,7 @@
     "fs-extra": "^11.2.0",
     "ice-npm-utils": "^3.0.3",
     "semver": "^7.6.0",
+    "signale": "^1.4.0",
     "yargs-parser": "^21.1.1"
   }
 }
