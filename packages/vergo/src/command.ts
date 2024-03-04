@@ -53,6 +53,8 @@ export default  function initCommand(fnConfig: UserConfig){
     .option('-b, --beta', 'is beta version')
     .option('-s, --set <version>', 'set version')
     .option('-m, --mainBranch <branch>', 'main branch')
+    .option('-o, --remote <remote>', 'remote url')
+
     .action(async(commandConfig: UserConfig) => {
 
       await action({

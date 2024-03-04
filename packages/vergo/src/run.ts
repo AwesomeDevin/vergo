@@ -1,6 +1,6 @@
 import * as path from "path";
 import resolveConfig, { Config } from "./config";
-import { diffBranch } from "./tools/git";
+import { diffBranch, initGifRemote } from "./tools/git";
 import { vergoCliLogger } from "./tools/log";
 import { getPackages, updatePackageVersion } from "./tools/version";
 import { VersionType } from "./tools/version/update-version";
@@ -18,12 +18,15 @@ export default async function run(commandConfig: Config) {
     beta,
     set,
     mainBranch,
+    remoteUrl,
     // append
   } = finalConfig;
 
 
   try {
     let type: VersionType = beta ? 'beta' : 'patch';
+
+    await initGifRemote(remoteUrl)
 
     const diffFiles = await diffBranch(mainBranch)
 

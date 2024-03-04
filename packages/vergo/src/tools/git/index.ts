@@ -1,7 +1,29 @@
 import conventionalChangelog from 'conventional-changelog';
 import { PWD_PATH } from '../../config/constant';
+import { vergoCliLogger } from '../log';
 // import * as fs from 'fs';
 // import * as path from 'path';
+
+
+
+
+export async function initGifRemote(remoteUrl?: string){
+  try{
+    const { $ } = await import('execa')
+    await $`git remote`
+    vergoCliLogger.log('git remote already exists')
+  } catch(e) {
+    if(!remoteUrl)
+    {
+      vergoCliLogger.error('remoteUrl is required')
+      return 
+    }
+    const { $ } = await import('execa')
+    await $`git remote add origin ${remoteUrl}`
+    vergoCliLogger.log('git remote added')
+  }
+  
+}
 
 
 /**

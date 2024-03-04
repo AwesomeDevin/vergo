@@ -29,6 +29,10 @@ export interface Config {
    * Set to 0 to regenerate all.
    */
   releaseCount?: number
+  /**
+   * remote registry url
+   */
+  remoteUrl?: string
 }
 
 export type UserConfig = Partial<Config>
