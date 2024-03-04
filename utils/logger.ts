@@ -8,7 +8,7 @@ function complete(message: string) {
 
 
 function warn(message: string) {
-  signale.warning((`[${this.name}] `) + (message))
+  signale.warn((`[${this.name}] `) + (message))
 }
 
 function error(message: string) {
