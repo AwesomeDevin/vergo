@@ -11,21 +11,20 @@ export default async (pkgJSON: { name: string, version: string }, type: VersionT
   let versions: string[] = [];
 
   try {
-    versions = await getVersions(name, registry);
+    versions = (await getVersions(name, registry)).sort(semver.rcompare);
   } catch (e: any) {
     vergoCliLogger.warn('Find Versions Error: ' + e.message);
   }
 
   const stableVersions = versions.filter((version) => {
     return semver.valid(version) && !semver.prerelease(version);
-  }).sort(semver.rcompare);
+  });
 
   // 获取最新的版本号包括 beta 版本
-  const allLatestVersion = versions.length ? versions[versions.length - 1] : version;
+  const allLatestVersion = versions.length ? versions[0] : version;
 
   // 获取最新的版本号不包括 beta 版本
-  const latestVersion = stableVersions.length ? stableVersions[stableVersions.length - 1] : version;
-
+  const latestVersion = stableVersions.length ? stableVersions[0] : version;
 
   const notReleasedAndNoBeta = !versions.includes(version) && type === 'patch' && !version.includes('beta')
   const notReleasedAndBeta = !versions.includes(version) && type === 'beta' && version.includes('beta')

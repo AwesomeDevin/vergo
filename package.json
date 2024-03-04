@@ -1,5 +1,5 @@
 {
-  "name": "vergo",
+  "name": "vergo-packages",
   "scripts": {
     "build": "pnpm -r  --parallel build",
     "pub": "pnpm -r  --parallel pub"

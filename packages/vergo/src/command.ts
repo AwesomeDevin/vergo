@@ -5,6 +5,42 @@ import run from './run';
 import { getMainBranch } from './tools/git';
 import { vergoCliLogger } from './tools/log';
 
+
+export async function action( commandConfig: UserConfig){
+  vergoCliLogger.start('start')
+
+  const defaultConfig: Config = {
+    registry: process.env.REGISTRY || DEFAULT_REGISTRY,
+    beta: process.env.BETA === 'true' || DEFAULT_IS_BETA, 
+    mainBranch: commandConfig.mainBranch || process.env.MAIN_BRANCH || await getMainBranch() || DEFAULT_MAIN_BRANCH
+  }
+
+  vergoCliLogger.await('init config')
+
+
+  const runConfig = {
+    ...defaultConfig,
+    ...commandConfig,
+  }
+
+  vergoCliLogger.complete('init config')
+
+  // registry
+  vergoCliLogger.log('registry: ' + runConfig.registry)
+
+   // main branch
+  vergoCliLogger.log('main branch: ' + defaultConfig.mainBranch)
+
+  // beta
+  vergoCliLogger.log('beta: ' + runConfig.beta)
+
+  run(runConfig).then(() => {
+    process.exit(0);
+  })
+}
+
+
+
 export default  function initCommand(fnConfig: UserConfig){
 
   const pkg = require('../package.json');
@@ -18,41 +54,13 @@ export default  function initCommand(fnConfig: UserConfig){
     .option('-b, --beta', 'is beta version')
     .option('-s, --set <version>', 'set version')
     .option('-m, --mainBranch <branch>', 'main branch')
+    .action(async(commandConfig: UserConfig) => {
 
-    .action(async(config: UserConfig) => {
-
-      vergoCliLogger.start('start')
-
-
-      const defaultConfig: Config = {
-        registry: process.env.REGISTRY || DEFAULT_REGISTRY,
-        beta: process.env.BETA === 'true' || DEFAULT_IS_BETA, 
-        mainBranch: config.mainBranch || process.env.MAIN_BRANCH || await getMainBranch() || DEFAULT_MAIN_BRANCH
-      }
-
-      vergoCliLogger.await('init config')
-
-
-      const runConfig = {
-        ...defaultConfig,
+      await action({
         ...fnConfig,
-        ...config
-      }
-
-      vergoCliLogger.complete('init config')
-
-      // registry
-      vergoCliLogger.log('registry: ' + runConfig.registry)
-
-       // main branch
-      vergoCliLogger.log('main branch: ' + defaultConfig.mainBranch)
-
-      // beta
-      vergoCliLogger.log('beta: ' + runConfig.beta)
-
-      run(runConfig).then(() => {
-        process.exit(0);
+        ...commandConfig,
       })
+      
     })
 
   program.parse();
