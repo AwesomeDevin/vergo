@@ -13,7 +13,7 @@ export default async (pkgJSON: { name: string, version: string }, type: VersionT
   try {
     versions = (await getVersions(name, registry)).sort(semver.rcompare);
   } catch (e: any) {
-    vergoCliLogger.warn('Find Versions Error: ' + e.message);
+    vergoCliLogger.warn(`${name} find Versions Error: ` + e.message);
   }
 
   const stableVersions = versions.filter((version) => {
@@ -26,16 +26,17 @@ export default async (pkgJSON: { name: string, version: string }, type: VersionT
   // 获取最新的版本号不包括 beta 版本
   const latestVersion = stableVersions.length ? stableVersions[0] : version;
 
+  // 需发布正式版，传入版本号为正式版本且未发布
   const notReleasedAndNoBeta = !versions.includes(version) && type === 'patch' && !version.includes('beta')
-  const notReleasedAndBeta = !versions.includes(version) && type === 'beta' && version.includes('beta')
 
+  // 需发布 beta 版，传入版本号为 beta 版且未发布
+  const notReleasedAndBeta = !versions.includes(version) && type === 'beta' && version.includes('beta')
 
   if (notReleasedAndNoBeta || notReleasedAndBeta) {
     // 传入版本号未发布，且符合要发的版本号规范，直接使用传入版本号
-    vergoCliLogger.success(`Project version unpublished, no update occurred, type: ${type}, version: ${version}`);
+    vergoCliLogger.success(`${name} version unpublished, no update occurred, type: ${type}, version: ${version}`);
     return version;
   }
-
 
   let newVersion: string;
   if (type === 'beta') {
@@ -54,6 +55,6 @@ export default async (pkgJSON: { name: string, version: string }, type: VersionT
       // 传入版本号未发布，直接使用传入版本号
     }
   }
-  vergoCliLogger.success(`type: ${type}, Update ${version} to ${newVersion}`);
+  vergoCliLogger.success(`${name} publish type: ${type}, Update ${version} to ${newVersion}`);
   return newVersion;
 }

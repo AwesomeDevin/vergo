@@ -1,7 +1,7 @@
 import { Package } from "@manypkg/get-packages";
 import { readFile, writeJSON } from "fs-extra";
 import { getWorkspaceInfo } from '../../../../../utils/monorepo';
-import { PWD_PATH } from "../../config/constant";
+import { PWD_PATH } from "../../command/run";
 import updateVersion, { VersionType } from "./update-version";
 
 
@@ -64,10 +64,20 @@ export async function getPackages(diffFiles: string[]) {
   return packages
 }
 
+/**
+ * get waiting for update packages
+ * @param diffFiles 
+ * @returns 
+ */
+export async function getWaitingForUpdatePackages(diffFiles: string[]){
+  const allPackages = await getPackages(diffFiles)
+  return allPackages.filter(pkg => pkg.isDiff)
+}
 
 
-export async function updateDepPackages(updatePackages, allPackages){
-  console.log('updateDepPackages',updateDepPackages)
+
+// export async function updateDepPackages(updatePackages, allPackages){
+//   console.log('updateDepPackages',updateDepPackages)
     // allPackages
     // .forEach((pkg) => {
     //   const curPkgDeps = updatePackages.filter((updatePkg) => (
@@ -89,4 +99,4 @@ export async function updateDepPackages(updatePackages, allPackages){
     //   });
 
     // });
-}
+// }

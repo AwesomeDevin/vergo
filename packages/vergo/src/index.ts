@@ -1,12 +1,13 @@
-import initCommand, { action as vergoAction } from './command'
+import initCommand from './command'
+import run from './command/run'
 import type { Config, UserConfig } from './config'
-import run from './run'
 import { getMainBranch } from './tools/git'
+
 
 export default initCommand
 
 export {
-  getMainBranch, run, vergoAction
+  getMainBranch, run
 }
 
 export type {
