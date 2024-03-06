@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { readJson, writeJson } from 'fs-extra';
 import * as path from 'path';
 import { VersionType } from './version/update-version';
 
@@ -35,6 +36,7 @@ export async function checkDirExistsAndCreate(dirPath: string) {
 }
 
 
+
 /**
  *  append str to file
  * @param filePath 
@@ -44,6 +46,36 @@ export function appendStrToFile(filePath: string, str: string) {
   fs.appendFileSync(filePath, str + '\n', { mode: 0o600 });
 }
 
+/**
+ *  overwrite file
+ * @param filePath 
+ * @param str 
+ */
+export function overwriteStrToFile(filePath: string, str: string) {
+  fs.writeFileSync(filePath, str, { mode: 0o600 });
+}
+
+/**
+ * 
+ * @param filePath 
+ * @param obj 
+ */
+export async function overwriteJsonToFile(filePath: string, obj: any) {
+  await writeJson(filePath, obj, { spaces: 2 })
+}
+
+/**
+ * 
+ * @param filePath 
+ * @returns 
+ */
+export async function readJsonFromFile(filePath: string) {
+  try{
+    return await readJson(filePath)
+  }catch(e){
+    return {}
+  }
+}
 
 
 /**
