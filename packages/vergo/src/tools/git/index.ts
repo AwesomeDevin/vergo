@@ -1,13 +1,15 @@
+import { spawn } from 'child_process';
 import conventionalChangelog from 'conventional-changelog';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
 import { PWD_PATH } from '../../config/constant';
 import { vergoCliLogger } from '../log';
-// import * as fs from 'fs';
-// import * as path from 'path';
 
 
 
 
-export async function initGifRemote(remoteUrl?: string){
+export async function initGitRemote(remoteUrl?: string){
   try{
     const { $ } = await import('execa')
     await $`git remote`
@@ -18,9 +20,49 @@ export async function initGifRemote(remoteUrl?: string){
       vergoCliLogger.error('remoteUrl is required')
       return 
     }
-    const { $ } = await import('execa')
+    const { $, execa } = await import('execa')
+
+    const match = remoteUrl.match(/git@([^:]+)/) || remoteUrl.match(/^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)/)
+    const remoteHost =  match ? match[1] : null
+    if(!remoteHost){
+      vergoCliLogger.error('remoteHost is required')
+      return 
+    }
+    vergoCliLogger.log('git remoteHost:' + remoteHost)
+
+    const sshDir = path.join(os.homedir(), '.ssh');
+    const knownHostsPath = path.join(sshDir, 'known_hosts');
+
+    // 确保 .ssh 目录存在
+    if (!fs.existsSync(sshDir)) {
+      fs.mkdirSync(sshDir, { mode: 0o700 }); // 创建 .ssh 目录，权限设置为仅当前用户可读写执行
+    }
+
+    // 将远程主机的公钥添加到 known_hosts 文件中
+    const remotePublicKey = await execa('ssh-keyscan', [remoteHost]);
+    fs.appendFileSync(knownHostsPath, remotePublicKey.stdout+ '\n', { mode: 0o600 });
+
     await $`git init`
-    await $`git remote add origin ${remoteUrl}`
+
+    await new Promise((resolve)=>{
+
+      const gitRemoteAdd = spawn('git', ['remote', 'add', 'origin', remoteUrl], { stdio: 'pipe' });
+      vergoCliLogger.log('gitRemoteAdd.stdout:' + gitRemoteAdd.stdout)
+      gitRemoteAdd.stdout?.pipe(process.stdout);
+      // 监听子进程需要输入的情况
+      gitRemoteAdd.stdout?.on('data', (data) => {
+        vergoCliLogger.log('data.toString():' + data.toString())
+        if (data.toString().includes('Are you sure you want to continue connecting')) {
+          // 当子进程请求确认时，发送 'yes' 并回车
+          gitRemoteAdd.stdin?.write('yes\n');
+        }
+      });
+      gitRemoteAdd.on('exit', (code) => {
+        resolve(true)
+      });
+    })
+
+    await $`git fetch origin`
     vergoCliLogger.log('git remote added')
   }
   

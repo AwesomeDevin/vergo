@@ -2,15 +2,15 @@ import { program } from 'commander';
 import resolveConfig, { Config, UserConfig } from "./config";
 import { DEFAULT_IS_BETA, DEFAULT_MAIN_BRANCH, DEFAULT_REGISTRY } from "./config/constant";
 import run from './run';
-import { getMainBranch, initGifRemote } from './tools/git';
+import { getMainBranch, initGitRemote } from './tools/git';
 import { vergoCliLogger } from './tools/log';
 
 
 export async function action( commandConfig: UserConfig){
 
-  vergoCliLogger.start('start')
+  vergoCliLogger.log('start')
 
-  vergoCliLogger.await('init config')
+  vergoCliLogger.log('init config')
 
   const defaultConfig: UserConfig = {
     registry: process.env.REGISTRY || DEFAULT_REGISTRY,
@@ -25,7 +25,7 @@ export async function action( commandConfig: UserConfig){
 
   const runConfig = resolveConfig(unResolvedConfig)
 
-  await initGifRemote(runConfig.remoteUrl)
+  await initGitRemote(runConfig.remoteUrl)
 
   const mainBranch = commandConfig.mainBranch || process.env.MAIN_BRANCH || await getMainBranch() || DEFAULT_MAIN_BRANCH
 
@@ -35,7 +35,7 @@ export async function action( commandConfig: UserConfig){
   }
 
 
-  vergoCliLogger.complete('init config')
+  vergoCliLogger.log('init config')
 
   // registry
   vergoCliLogger.log('registry: ' + resolvedConfig.registry)
@@ -67,7 +67,7 @@ export default  function initCommand(fnConfig: UserConfig){
     .option('-b, --beta', 'is beta version')
     .option('-s, --set <version>', 'set version')
     .option('-m, --mainBranch <branch>', 'main branch')
-    .option('-o, --remote <remote>', 'remote url')
+    .option('-o, --remoteUrl <remoteUrl>', 'git remote url')
 
     .action(async(commandConfig: UserConfig) => {
 
