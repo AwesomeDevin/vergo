@@ -5,7 +5,7 @@
     "pub": "pnpm -r  --parallel pub"
   },
   "devDependencies": {
-    "@manypkg/get-packages": "^2.2.0",
+    "@manypkg/get-packages": "^1.1.3",
     "@types/node": "^20.11.6",
     "consola": "^3.2.3",
     "conventional-changelog-cli": "^4.1.0",

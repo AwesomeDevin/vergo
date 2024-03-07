@@ -1,6 +1,17 @@
 {
   "packages": [
     {
+      "name": "vergo-utils",
+      "dir": "/Users/dengwen/vergo/packages/utils",
+      "diffFiles": [
+        "/Users/dengwen/vergo/packages/utils/index.ts",
+        "/Users/dengwen/vergo/packages/utils/logger.ts",
+        "/Users/dengwen/vergo/packages/utils/monorepo.ts",
+        "/Users/dengwen/vergo/packages/utils/package.json"
+      ],
+      "isDependOn": []
+    },
+    {
       "name": "vergo",
       "dir": "/Users/dengwen/vergo/packages/vergo",
       "diffFiles": [
