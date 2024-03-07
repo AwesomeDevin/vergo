@@ -1,0 +1,28 @@
+{
+  "packages": [
+    {
+      "name": "vergo",
+      "dir": "/Users/dengwen/vergo/packages/vergo",
+      "diffFiles": [
+        "/Users/dengwen/vergo/packages/vergo/build.config.js",
+        "/Users/dengwen/vergo/packages/vergo/package.json",
+        "/Users/dengwen/vergo/packages/vergo/src/command.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/command/diff.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/command/init.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/command/run.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/config/constant.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/config/index.tsx",
+        "/Users/dengwen/vergo/packages/vergo/src/index.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/run.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/tools/git/index.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/tools/index.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/tools/log.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/tools/version/dep-analysis.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/tools/version/index.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/tools/version/upgrade-version.ts",
+        "/Users/dengwen/vergo/packages/vergo/src/typing.ts"
+      ],
+      "isDependOn": []
+    }
+  ]
+}

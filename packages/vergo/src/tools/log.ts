@@ -1,4 +1,4 @@
-import Logger from '../../../../utils/logger'
+import Logger from '../../../utils/logger';
+import { NAME } from '../config/constant';
 
-const name = 'vergo'
-export const vergoCliLogger = new Logger(name)
+export const vergoCliLogger = new Logger(NAME);

@@ -1,33 +1,38 @@
-
-import { PWD_PATH } from '../../config/constant';
-
+import { NAME, PWD_PATH } from '../../config/constant';
 
 /**
  * diff current branch with main branch
  */
 export async function diffBranch(defaultBranch) {
-  const { $ } = await import('execa')
-  const { stdout } = await $`git diff --name-only origin/${defaultBranch}`
+  const { $ } = await import('execa');
+  const { stdout } = await $`git diff --name-only origin/${defaultBranch}`;
 
-  const pwdPath = PWD_PATH
-  return stdout.length ? stdout.split('\n').map(item => `${pwdPath}/${item}`) : []
+  const pwdPath = PWD_PATH;
+  return stdout.length ? stdout.split('\n').map((item) => `${pwdPath}/${item}`) : [];
 }
 
 /**
  * get main branch
  * @returns main branch
  */
-export async function getMainBranch(){
-  const { $ } = await import('execa')
-  const { stdout } = await $`git remote show origin`
-  const mainBranch = stdout.match(/HEAD branch: (.*)/)?.[1]
-  return mainBranch
-
+export async function getMainBranch() {
+  const { $ } = await import('execa');
+  const { stdout } = await $`git remote show origin`;
+  const mainBranch = stdout.match(/HEAD branch: (.*)/)?.[1];
+  return mainBranch;
 }
 
+/**
+ *  get pre commit shells
+ * @param mainBranch
+ * @returns
+ */
+export function getPreCommitShells(mainBranch: string) {
+  return ['#!/bin/sh', `npx @ali/${NAME} diff -m ${mainBranch}`];
+}
 
 /**
- * write to CHANGELOG.md 
+ * write to CHANGELOG.md
  */
 // export async function generateChangeLog(params?: {
 //   packagePath?: string
@@ -42,7 +47,6 @@ export async function getMainBranch(){
 //     tagPrefix = 'v',
 //     append,
 //   } = params || {}
-
 
 //   const transform = (commit) => {
 //     if (!commit.subject) {

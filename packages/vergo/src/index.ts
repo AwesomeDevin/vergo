@@ -7,7 +7,8 @@ import { getMainBranch } from './tools/git'
 export default initCommand
 
 export {
-  getMainBranch, run
+  getMainBranch,
+  run
 }
 
 export type {

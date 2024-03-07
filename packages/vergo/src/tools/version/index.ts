@@ -1,102 +1,131 @@
-import { Package } from "@manypkg/get-packages";
-import { readFile, writeJSON } from "fs-extra";
-import { getWorkspaceInfo } from '../../../../../utils/monorepo';
-import { PWD_PATH } from "../../command/run";
-import updateVersion, { VersionType } from "./update-version";
+import * as path from 'path';
+import { PackageJSON } from '@changesets/types';
+import { Packages } from '@manypkg/get-packages';
+import { readFile } from 'fs-extra';
+import { IUpdatedPackage, IWaitingForUpgradePackage, TVergoPackage } from '../../typing';
+import { getPrePubDiffJsonFileName, overwriteJsonToFile, readJsonFromFile } from '../index';
+import { vergoCliLogger } from '../log';
+import upgradeVersion, { VersionType } from './upgrade-version';
 
-
-/**
- * update package version 
- */
-export async function updatePackageVersion({
-  packagePath, type, registry, set
-}: {
-  packagePath: string,
-  type: VersionType,
-  registry: string,
-  set?: string
-}) {
-  const pkgJSON = JSON.parse(await readFile(packagePath, 'utf8'))
-  const newVersion = await updateVersion({
-    name: pkgJSON.name,
-    version: set || pkgJSON.version
-  }, type, registry);
-  pkgJSON.version = newVersion;
-  await writeJSON(packagePath, pkgJSON, { spaces: 2 });
-  return pkgJSON
+export async function packageDoubleCheckFailed(pkg: IWaitingForUpgradePackage) {
+  const prePubDiffJsonFileName = getPrePubDiffJsonFileName();
+  const prePubDiffJson = await readJsonFromFile(prePubDiffJsonFileName);
+  const packages = prePubDiffJson?.packages || [];
+  if (!packages.some((item) => item.name === pkg.name)) {
+    return true;
+  }
+  return false;
 }
 
+/**
+ * upgrade package version
+ */
+export async function upgradePackageVersion({
+  waitingForUpgradePackage,
+  type,
+  registry,
+  set,
+  doubleDiffCheck,
+}: {
+  waitingForUpgradePackage: IWaitingForUpgradePackage;
+  type: VersionType;
+  registry: string;
+  set?: string;
+  doubleDiffCheck?: boolean;
+}) {
+  const packageJSONPath = path.join(waitingForUpgradePackage.dir, 'package.json');
 
+  const pkgJSON: PackageJSON = JSON.parse(await readFile(packageJSONPath, 'utf8'));
+
+  const newVersion = await upgradeVersion(
+    {
+      name: pkgJSON.name,
+      version: set || pkgJSON.version,
+    },
+    type,
+    registry,
+  );
+
+  if (doubleDiffCheck) {
+    vergoCliLogger.await(
+      `git diff failed, double checking for ${waitingForUpgradePackage.name} version: ${newVersion} ...`,
+    );
+    if (await packageDoubleCheckFailed(waitingForUpgradePackage)) {
+      vergoCliLogger.warn(
+        `double check failed for ${waitingForUpgradePackage.name} version: ${newVersion}, skip upgrade.`,
+      );
+      return;
+    }
+  }
+
+  await overwriteJsonToFile(packageJSONPath, {
+    ...pkgJSON,
+    version: newVersion,
+  });
+
+  const res: IUpdatedPackage = {
+    pkgJSON,
+    newVersion,
+    oldVersion: pkgJSON.version,
+  };
+
+  return res;
+}
 
 /**
  * calculate new version by type
  * @param param
- * @returns 
+ * @returns
  */
 export async function getNewVersion({
   packageName,
   currentVersion,
   type,
-  registry
+  registry,
 }: {
-  packageName: string,
-  currentVersion: string,
-  type: VersionType
-  registry: string
+  packageName: string;
+  currentVersion: string;
+  type: VersionType;
+  registry: string;
 }) {
-  const newVersion = await updateVersion({
-    name: packageName,
-    version: currentVersion
-  }, type, registry);
+  const newVersion = await upgradeVersion(
+    {
+      name: packageName,
+      version: currentVersion,
+    },
+    type,
+    registry,
+  );
   return newVersion;
 }
 
-
 /**
- * get packages
+ * get all packages
  */
-export async function getPackages(diffFiles: string[]) {
-  const workspaceInfo = await getWorkspaceInfo(PWD_PATH)
-  const packages: (Package & { isDiff: boolean })[] = workspaceInfo.packages.map(pkg => ({
-    ...pkg,
-    isDiff: diffFiles.some(file => file.startsWith(pkg.dir))
-  }))
-  return packages
+export async function getAllPackages(workspaceInfo: Packages, diffFiles?: string[]) {
+  const packages: TVergoPackage[] = workspaceInfo.packages.map((pkg) => {
+    const curDiffFiles = typeof diffFiles === 'undefined' ? [] : diffFiles?.filter((file) => file.startsWith(pkg.dir));
+    return {
+      ...pkg,
+      isDiff: typeof diffFiles === 'undefined' ? true : curDiffFiles.length > 0,
+      diffFiles: curDiffFiles,
+    };
+  });
+  return packages;
 }
 
 /**
- * get waiting for update packages
- * @param diffFiles 
- * @returns 
+ * get waiting for upgrade packages
+ * @param diffFiles
+ * @returns
  */
-export async function getWaitingForUpdatePackages(diffFiles: string[]){
-  const allPackages = await getPackages(diffFiles)
-  return allPackages.filter(pkg => pkg.isDiff)
+export async function getWaitingForUpgradePackages(allPackages: TVergoPackage[]): Promise<IWaitingForUpgradePackage[]> {
+  const res: IWaitingForUpgradePackage[] = allPackages
+    .filter((pkg) => pkg.isDiff)
+    .map((item) => ({
+      dir: item.dir,
+      name: item.packageJson.name,
+      diffFiles: item.diffFiles,
+    }));
+  return res;
 }
-
-
-
-// export async function updateDepPackages(updatePackages, allPackages){
-//   console.log('updateDepPackages',updateDepPackages)
-    // allPackages
-    // .forEach((pkg) => {
-    //   const curPkgDeps = updatePackages.filter((updatePkg) => (
-    //     updatePkg.name &&
-    //      ((pkg.packageJson.dependencies?.length && updatePkg.name in pkg.packageJson.dependencies) ||
-    //     (pkg.packageJson.devDependencies?.length && updatePkg.name in pkg.packageJson.devDependencies))
-    //   ))
-    //   if (!curPkgDeps.length) return;
-      
-    //   // update version
-    //   curPkgDeps.forEach((curPkg) => {
-    //     const newVersion = curPkg.version;
-    //     if (pkg.packageJson.dependencies?.length && curPkg.name in pkg.packageJson.dependencies) {
-    //       pkg.packageJson.dependencies[curPkg.name] = `^${newVersion}`;
-    //     }
-    //     if (pkg.packageJson.devDependencies?.length && curPkg.name in pkg.packageJson.devDependencies) {
-    //       pkg.packageJson.devDependencies[curPkg.name] = `^${newVersion}`;
-    //     }
-    //   });
-
-    // });
-// }

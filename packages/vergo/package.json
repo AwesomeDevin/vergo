@@ -32,8 +32,12 @@
     "url": "https://github.com/AwesomeDevin/lzd-seller-plugins/issues"
   },
   "homepage": "https://github.com/AwesomeDevin/lzd-seller-plugins#readme",
+  "devDependencies": {
+    "@changesets/types": "^6.0.0"
+  },
   "dependencies": {
-    "@manypkg/get-packages": "^2.2.0",
+    "@changesets/get-dependents-graph": "^2.0.0",
+    "@manypkg/get-packages": "^1.1.3",
     "commander": "^12.0.0",
     "consola": "^3.2.3",
     "conventional-changelog": "^5.1.0",
@@ -43,7 +47,6 @@
     "fs-extra": "^11.2.0",
     "ice-npm-utils": "^3.0.3",
     "semver": "^7.6.0",
-    "signale": "^1.4.0",
-    "yargs-parser": "^21.1.1"
+    "signale": "^1.4.0"
   }
 }

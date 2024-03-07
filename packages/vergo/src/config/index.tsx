@@ -1,7 +1,7 @@
-import { resolveConfig as esBuildResolveConfig } from "esbuild-resolve-config";
-import { getMainBranch } from "../tools/git";
-import { vergoCliLogger } from "../tools/log";
-import { DEFAULT_IS_BETA, DEFAULT_MAIN_BRANCH, DEFAULT_REGISTRY } from "./constant";
+import { resolveConfig as esBuildResolveConfig } from 'esbuild-resolve-config';
+import { getMainBranch } from '../tools/git';
+import { vergoCliLogger } from '../tools/log';
+import { DEFAULT_IS_BETA, DEFAULT_MAIN_BRANCH, DEFAULT_REGISTRY } from './constant';
 
 export interface Config {
   /**
@@ -21,64 +21,49 @@ export interface Config {
    */
   mainBranch: string;
   /**
-   * Changelog tagPrefix
+   * Enable analyze dependencies
    */
-  tagPrefix?: string;
-  /**
-   * Should the log be appended to existing data.
-   */
-  append?: string
-  /**
-   * Set to 0 to regenerate all.
-   */
-  releaseCount?: number
+  analyzeDeps?: boolean;
 }
 
-export type UserConfig = Partial<Config>
-
-
-
+export type UserConfig = Partial<Config>;
 
 export default function resolveConfig(commandConfig): Config {
-
-  const userConfig = esBuildResolveConfig<UserConfig>(".vergorc", {}) || {}
+  const userConfig = esBuildResolveConfig<UserConfig>('.vergorc', {}) || {};
 
   const config = {
     ...commandConfig,
     ...userConfig,
-  }
+  };
 
   return config;
 }
 
-
-export async function getRuntimeConfig( commandConfig: UserConfig){
-
-
-  vergoCliLogger.await('initialize running config')
+export async function getRuntimeConfig(commandConfig: UserConfig) {
+  vergoCliLogger.await('initialize running config');
 
   const defaultConfig: UserConfig = {
     registry: process.env.REGISTRY || DEFAULT_REGISTRY,
-    beta: process.env.BETA === 'true' || DEFAULT_IS_BETA, 
-  }
+    beta: process.env.BETA === 'true' || DEFAULT_IS_BETA,
+  };
 
   const unResolvedConfig = {
     ...defaultConfig,
     ...commandConfig,
-  }
+  };
 
-  const resolvedConfig = resolveConfig(unResolvedConfig)
+  const resolvedConfig = resolveConfig(unResolvedConfig);
 
-  const mainBranch = commandConfig.mainBranch || process.env.MAIN_BRANCH || await getMainBranch() || DEFAULT_MAIN_BRANCH
+  const mainBranch =
+    commandConfig.mainBranch || process.env.MAIN_BRANCH || (await getMainBranch()) || DEFAULT_MAIN_BRANCH;
 
   const runtimeConfig: Config = {
     ...resolvedConfig,
-    mainBranch
-  }
+    mainBranch,
+  };
 
   // running config
-  vergoCliLogger.log('initialize running config: ' + JSON.stringify(runtimeConfig, null, 2))
+  vergoCliLogger.log(`initialize running config: ${JSON.stringify(runtimeConfig)}`);
 
-  return runtimeConfig
-
+  return runtimeConfig;
 }
