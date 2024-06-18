@@ -28,7 +28,7 @@ export async function getMainBranch() {
  * @returns
  */
 export function getPreCommitShells(mainBranch: string) {
-  return ['#!/bin/sh', `npx @ali/${NAME} diff -m ${mainBranch}`];
+  return ['#!/bin/sh', `npx ${NAME} diff -m ${mainBranch}`];
 }
 
 /**

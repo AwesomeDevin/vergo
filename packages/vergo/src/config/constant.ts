@@ -6,5 +6,3 @@ export const PWD_PATH = process.cwd();
 export const VERGO_DIR_NAME = `.${NAME}`;
 export const VERSION_FILE_NAME = 'prepub';
 
-// pre-commit file content
-export const preCommitShells = ['#!/bin/sh', `npx @ali/${NAME} diff`];
