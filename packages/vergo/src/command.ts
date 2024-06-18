@@ -1,4 +1,5 @@
 import { program } from 'commander';
+import build from './command/build';
 import diff from './command/diff';
 import init from './command/init';
 import run from './command/run';
@@ -61,6 +62,16 @@ export default function initCommand(fnConfig: UserConfig) {
         vergoCliLogger.error(e.message);
       }
     });
+
+  program
+  .command('build')
+  .action(async () => {
+    try {
+      await build();
+    } catch (e: any) {
+      vergoCliLogger.error(e.message);
+    }
+  });
 
   program.parse();
 }
