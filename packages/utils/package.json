@@ -1,5 +1,5 @@
 {
-  "name": "vergo-utils",
+  "name": "@vergo/utils",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,5 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "AwesomeDevin",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@changesets/get-dependents-graph": "^2.0.0"
+  }
 }

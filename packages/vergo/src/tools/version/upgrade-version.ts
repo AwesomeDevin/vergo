@@ -1,29 +1,26 @@
-import { getVersions } from 'ice-npm-utils';
 import semver from 'semver';
 import { vergoCliLogger } from '../log';
+import { getVersionInfo } from './index';
 
 export type VersionType = 'patch' | 'beta';
 
 export default async (pkgJSON: { name: string; version: string }, type: VersionType, registry: string) => {
   const { name, version } = pkgJSON;
 
-  let versions: string[] = [];
-
-  try {
-    versions = (await getVersions(name, registry)).sort(semver.rcompare);
-  } catch (e: any) {
-    vergoCliLogger.warn(`${name} find Versions Error: ${e.message}`);
+  if (!version || !name) {
+    vergoCliLogger.warn('package name or version is empty');
+    return;
   }
 
-  const stableVersions = versions.filter((version) => {
-    return semver.valid(version) && !semver.prerelease(version);
-  });
+  const latestVersionObj = await getVersionInfo(name, registry);
+
+  const versions = latestVersionObj.versions || [];
 
   // 获取最新的版本号包括 beta 版本
-  const allLatestVersion = versions.length ? versions[0] : version;
+  const allLatestVersion = latestVersionObj.latestVersion || version;
 
   // 获取最新的版本号不包括 beta 版本
-  const latestVersion = stableVersions.length ? stableVersions[0] : version;
+  const latestVersion = latestVersionObj.stableLatestVersion || version;
 
   // 需发布正式版，传入版本号为正式版本且未发布
   const notReleasedAndNoBeta = !versions.includes(version) && type === 'patch' && !version.includes('beta');

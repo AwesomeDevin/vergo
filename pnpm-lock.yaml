@@ -49,7 +49,11 @@ importers:
         specifier: workspace:*
         version: link:packages/vergo
 
-  packages/utils: {}
+  packages/utils:
+    dependencies:
+      '@changesets/get-dependents-graph':
+        specifier: ^2.0.0
+        version: 2.0.0
 
   packages/vergo:
     dependencies:

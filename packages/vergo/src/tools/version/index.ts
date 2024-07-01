@@ -1,7 +1,9 @@
-import * as path from 'path';
 import { PackageJSON } from '@changesets/types';
 import { Packages } from '@manypkg/get-packages';
 import { readFile } from 'fs-extra';
+import { getVersions } from 'ice-npm-utils';
+import * as path from 'path';
+import semver from 'semver';
 import { IUpdatedPackage, IWaitingForUpgradePackage, TVergoPackage } from '../../typing';
 import { getPrePubDiffJsonFileName, overwriteJsonToFile, readJsonFromFile } from '../index';
 import { vergoCliLogger } from '../log';
@@ -25,15 +27,21 @@ export async function upgradePackageVersion({
   type,
   registry,
   set,
+  projectRoot = '',
   doubleDiffCheck,
 }: {
   waitingForUpgradePackage: IWaitingForUpgradePackage;
   type: VersionType;
   registry: string;
   set?: string;
+  projectRoot?: string;
   doubleDiffCheck?: boolean;
 }) {
-  const packageJSONPath = path.join(waitingForUpgradePackage.dir, 'package.json');
+  if (!waitingForUpgradePackage.relativeDir) {
+    throw new Error(`${waitingForUpgradePackage.relativeDir} is required`);
+  }
+
+  const packageJSONPath = path.join(projectRoot, waitingForUpgradePackage.relativeDir, 'package.json');
 
   const pkgJSON: PackageJSON = JSON.parse(await readFile(packageJSONPath, 'utf8'));
 
@@ -67,6 +75,7 @@ export async function upgradePackageVersion({
     pkgJSON,
     newVersion,
     oldVersion: pkgJSON.version,
+    relativeDir: waitingForUpgradePackage.relativeDir,
   };
 
   return res;
@@ -99,10 +108,90 @@ export async function getNewVersion({
   return newVersion;
 }
 
+
+export function findTargetPkg({
+  waitingUpgradePackagesByChange,
+  allPackages,
+  targetPackageName,
+  projectRoot = '',
+}: {
+  waitingUpgradePackagesByChange: IWaitingForUpgradePackage[];
+  allPackages: TVergoPackage[];
+  targetPackageName: string;
+  projectRoot: string;
+}): IWaitingForUpgradePackage | undefined {
+  const res1 = waitingUpgradePackagesByChange.find((item) => item.name === targetPackageName);
+  if (res1) {
+    return res1;
+  }
+  const res2 = allPackages.find((item) => item.packageJson.name === targetPackageName);
+  if (res2) {
+    return {
+      name: res2.packageJson.name,
+      relativeDir: res2.dir.replace(projectRoot, ''),
+      diffFiles: res2.diffFiles,
+    };
+  }
+  return undefined;
+}
+
+export function generateDependOn({
+  targetPackageName,
+  depGraph,
+  allPackages,
+  result,
+  waitingUpgradePackagesByChange,
+  projectRoot,
+}: {
+  targetPackageName: string;
+  depGraph?: Map<string, string[]>;
+  allPackages: TVergoPackage[];
+  result: IWaitingForUpgradePackage[];
+  waitingUpgradePackagesByChange: IWaitingForUpgradePackage[];
+  projectRoot: string;
+}) {
+  const dependOnPkgNames = depGraph?.get(targetPackageName);
+
+  const pkg = findTargetPkg({
+    waitingUpgradePackagesByChange,
+    allPackages,
+    targetPackageName,
+    projectRoot,
+  });
+
+  const item: IWaitingForUpgradePackage = {
+    name: targetPackageName,
+    relativeDir: pkg?.relativeDir || 'unknown',
+    diffFiles: pkg?.diffFiles || [],
+    isDependOn: dependOnPkgNames,
+  };
+
+  if (!result.some((item) => item.name === targetPackageName)) {
+    result.push(item);
+  }
+
+  if (dependOnPkgNames) {
+    dependOnPkgNames?.forEach((hostPkgName) => {
+      const hostPkgWaitingForUpdate = result.some((item) => item.name === hostPkgName);
+      if (!hostPkgWaitingForUpdate) {
+        generateDependOn({
+          targetPackageName: hostPkgName,
+          depGraph,
+          allPackages,
+          result,
+          waitingUpgradePackagesByChange,
+          projectRoot,
+        });
+      }
+    });
+  }
+}
+
 /**
  * get all packages
  */
 export async function getAllPackages(workspaceInfo: Packages, diffFiles?: string[]) {
+  console.log('workspaceInfo', workspaceInfo)
   const packages: TVergoPackage[] = workspaceInfo.packages.map((pkg) => {
     const curDiffFiles = typeof diffFiles === 'undefined' ? [] : diffFiles?.filter((file) => file.startsWith(pkg.dir));
     return {
@@ -119,13 +208,63 @@ export async function getAllPackages(workspaceInfo: Packages, diffFiles?: string
  * @param diffFiles
  * @returns
  */
-export async function getWaitingForUpgradePackages(allPackages: TVergoPackage[]): Promise<IWaitingForUpgradePackage[]> {
-  const res: IWaitingForUpgradePackage[] = allPackages
+export async function getWaitingForUpgradePackages(
+  allPackages: TVergoPackage[],
+  depGraph?: Map<string, string[]>,
+  projectRoot = '',
+): Promise<IWaitingForUpgradePackage[]> {
+  const packages: IWaitingForUpgradePackage[] = [];
+  const waitingUpgradePackagesByChange = allPackages
     .filter((pkg) => pkg.isDiff)
-    .map((item) => ({
-      dir: item.dir,
-      name: item.packageJson.name,
-      diffFiles: item.diffFiles,
-    }));
-  return res;
+    .map((item) => {
+      const res: IWaitingForUpgradePackage = {
+        relativeDir: item.dir.replace(projectRoot, ''),
+        name: item.packageJson.name,
+        diffFiles: item.diffFiles.map((file) => file.replace(projectRoot, '')),
+      };
+      return res;
+    });
+
+  for (const pkg of waitingUpgradePackagesByChange) {
+    if (depGraph) {
+      generateDependOn({
+        targetPackageName: pkg.name,
+        depGraph,
+        allPackages,
+        result: packages,
+        waitingUpgradePackagesByChange,
+        projectRoot,
+      });
+    } else {
+      packages.push(pkg);
+    }
+  }
+
+  return packages;
+}
+
+
+export async function getVersionInfo(name: string, registry: string) {
+  let versions: string[] = [];
+  try {
+    versions = (await getVersions(name, registry)).sort(semver.rcompare);
+  } catch (e: any) {
+    vergoCliLogger.warn(`${name} find Versions Error: ${e.message}`);
+  }
+
+  const stableVersions = versions.filter((version) => {
+    return semver.valid(version) && !semver.prerelease(version);
+  });
+
+  // 获取最新的版本号包括 beta 版本
+  const latestVersion = versions.length ? versions[0] : undefined;
+
+  // 获取最新的版本号不包括 beta 版本
+  const stableLatestVersion = stableVersions.length ? stableVersions[0] : undefined;
+
+  return {
+    latestVersion,
+    stableLatestVersion,
+    versions,
+  };
 }

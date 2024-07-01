@@ -26,7 +26,7 @@ export default async function buildCommand() {
     const buildCommand = prePubPackageNames.map((name) => `--filter ${name}`).join(' ');
     rootPackageJson.scripts.build = `pnpm ${buildCommand} run build`;
   } else {
-    // 如果没有 prepub.xxx.json 文件，则默认构建所有包
+    // 如果没有 prepub.json 文件，则默认构建所有包
     rootPackageJson.scripts.build = 'pnpm -r --filter=./packages/**/* run build';
   }
 

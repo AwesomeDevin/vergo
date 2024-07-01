@@ -1,5 +1,4 @@
 # vergo
-upgrade version follow semver
 
 ### Basic Usage
 
@@ -13,5 +12,3 @@ avergo run
 ```
 avergo run -b
 ```
-
-### 

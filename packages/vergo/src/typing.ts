@@ -3,7 +3,7 @@ import type { Package } from '@manypkg/get-packages';
 
 export interface IWaitingForUpgradePackage {
   name: string;
-  dir: string;
+  relativeDir: string;
   diffFiles: string[];
   isDependOn?: string[];
 }
@@ -15,4 +15,5 @@ export interface IUpdatedPackage {
   pkgJSON: PackageJSON;
   newVersion: string;
   oldVersion: string;
+  relativeDir: string
 }

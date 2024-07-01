@@ -20,6 +20,8 @@ export default async function initPreCommitHook(commandConfig: UserConfig & { pa
 
   const projectRoot = await getProjectRoot(commandConfig.path);
 
+ 
+
   const { root: rootPackage } = await getWorkspaceInfo(projectRoot);
   const rootDir = rootPackage?.dir;
   if (!rootDir) {
@@ -27,6 +29,12 @@ export default async function initPreCommitHook(commandConfig: UserConfig & { pa
       'initialize pre-commit failed, rootDir not found in workspace, you can specify running path by -p option.',
     );
   }
+  console.log('projectRoot',projectRoot)
+  console.log('__dirname',__dirname)
+  console.log('rootPackage',rootPackage)
+  console.log('commandConfig',commandConfig)
+
+
   const hookDir = path.join(rootDir, '.git/hooks');
   const preCommitPath = path.join(hookDir, 'pre-commit');
 
