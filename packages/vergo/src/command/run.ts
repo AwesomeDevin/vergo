@@ -16,8 +16,6 @@ export default async function run(commandConfig: UserConfig) {
 
   const { registry, beta, set, mainBranch, analyzeDeps } = runtimeConfig;
 
-  console.log(analyzeDeps)
-
   const type = getType(beta);
 
   const workspaceInfo = await getWorkspaceInfo(PWD_PATH);

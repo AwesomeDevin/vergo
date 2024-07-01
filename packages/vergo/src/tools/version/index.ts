@@ -191,7 +191,6 @@ export function generateDependOn({
  * get all packages
  */
 export async function getAllPackages(workspaceInfo: Packages, diffFiles?: string[]) {
-  console.log('workspaceInfo', workspaceInfo)
   const packages: TVergoPackage[] = workspaceInfo.packages.map((pkg) => {
     const curDiffFiles = typeof diffFiles === 'undefined' ? [] : diffFiles?.filter((file) => file.startsWith(pkg.dir));
     return {
