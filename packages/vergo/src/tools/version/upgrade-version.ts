@@ -8,8 +8,7 @@ export default async (pkgJSON: { name: string; version: string }, type: VersionT
   const { name, version } = pkgJSON;
 
   if (!version || !name) {
-    vergoCliLogger.warn('package name or version is empty');
-    return;
+    throw new Error('package name or version is empty');
   }
 
   const latestVersionObj = await getVersionInfo(name, registry);

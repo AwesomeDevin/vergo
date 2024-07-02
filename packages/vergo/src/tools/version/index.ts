@@ -4,6 +4,7 @@ import { readFile } from 'fs-extra';
 import { getVersions } from 'ice-npm-utils';
 import * as path from 'path';
 import semver from 'semver';
+import { PWD_PATH } from '../../config/constant';
 import { IUpdatedPackage, IWaitingForUpgradePackage, TVergoPackage } from '../../typing';
 import { getPrePubDiffJsonFileName, overwriteJsonToFile, readJsonFromFile } from '../index';
 import { vergoCliLogger } from '../log';
@@ -190,7 +191,7 @@ export function generateDependOn({
 /**
  * get all packages
  */
-export async function getAllPackages(workspaceInfo: Packages, diffFiles?: string[]) {
+export async function getAllPackages({workspaceInfo, diffFiles, excludes }: {workspaceInfo: Packages, diffFiles?: string[], excludes?: string[]}) {
   const packages: TVergoPackage[] = workspaceInfo.packages.map((pkg) => {
     const curDiffFiles = typeof diffFiles === 'undefined' ? [] : diffFiles?.filter((file) => file.startsWith(pkg.dir));
     return {
@@ -199,7 +200,11 @@ export async function getAllPackages(workspaceInfo: Packages, diffFiles?: string
       diffFiles: curDiffFiles,
     };
   });
-  return packages;
+  const pkgs = packages.filter((pkg) => !excludes?.some((exclude) => {
+    return pkg.dir.match(new RegExp(`^${path.join(PWD_PATH, exclude)}`))
+  }));
+  return pkgs
+
 }
 
 /**

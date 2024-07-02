@@ -31,13 +31,13 @@ export async function touchDiffJsonFile(packages: IWaitingForUpgradePackage[]) {
 
 export default async function diff(config: UserConfig) {
   const runtimeConfig = await getRuntimeConfig(config);
-  const { mainBranch, analyzeDeps } = runtimeConfig;
+  const { mainBranch, analyzeDeps, excludes } = runtimeConfig;
 
   const diffFiles = await diffBranch(mainBranch);
 
   const workspaceInfo = await getWorkspaceInfo(PWD_PATH);
   const depGraph = analyzeDeps ? await getDepGraph(workspaceInfo) : undefined;
-  const allPackages = await getAllPackages(workspaceInfo, diffFiles);
+  const allPackages = await getAllPackages({workspaceInfo, diffFiles, excludes});
   const waitingForUpgradePackages = await getWaitingForUpgradePackages(allPackages, depGraph, workspaceInfo.root.dir);
 
   await checkDirExistsAndCreate(VERGO_DIR_NAME);

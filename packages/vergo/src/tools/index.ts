@@ -1,6 +1,6 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import { readJson, writeJson } from 'fs-extra';
+import * as path from 'path';
 import { PWD_PATH, VERGO_DIR_NAME, VERSION_FILE_NAME } from '../config/constant';
 import { VersionType } from './version/upgrade-version';
 
@@ -72,7 +72,7 @@ export async function overwriteJsonToFile(filePath: string, obj: any) {
  * @param filePath
  * @returns
  */
-export async function readJsonFromFile(filePath: string): Promise<null | Record<string, any>> {
+export async function readJsonFromFile<T extends Record<string, any>>(filePath: string): Promise<null | T> {
   try {
     return await readJson(filePath);
   } catch (e) {

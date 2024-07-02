@@ -14,7 +14,7 @@ export * from '../config/constant';
 export default async function run(commandConfig: UserConfig) {
   const runtimeConfig = await getRuntimeConfig(commandConfig);
 
-  const { registry, beta, set, mainBranch, analyzeDeps } = runtimeConfig;
+  const { registry, beta, set, mainBranch, analyzeDeps, excludes } = runtimeConfig;
 
   const type = getType(beta);
 
@@ -29,9 +29,9 @@ export default async function run(commandConfig: UserConfig) {
   try {
     // by git diff
     const diffFiles = await diffBranch(mainBranch);
-    allPackages = await getAllPackages(workspaceInfo, diffFiles);
+    allPackages = await getAllPackages({workspaceInfo, diffFiles, excludes});
   } catch (e: any) {
-    allPackages = await getAllPackages(workspaceInfo);
+    allPackages = await getAllPackages({workspaceInfo, excludes});
     doubleDiffCheck = true;
   }
 
