@@ -200,9 +200,12 @@ export async function getAllPackages({workspaceInfo, diffFiles, excludes }: {wor
       diffFiles: curDiffFiles,
     };
   });
-  const pkgs = packages.filter((pkg) => !excludes?.some((exclude) => {
-    return pkg.dir.match(new RegExp(`^${path.join(PWD_PATH, exclude)}`))
-  }));
+  const pkgs = packages.filter(
+    (pkg) =>
+      !excludes?.some((exclude) => {
+        return pkg.dir.match(new RegExp(`^${path.join(PWD_PATH, exclude)}`));
+      }) && pkg.dir.match(new RegExp(`^${PWD_PATH}`)),
+  );
   return pkgs
 
 }
