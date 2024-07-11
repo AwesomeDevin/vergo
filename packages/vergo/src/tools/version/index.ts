@@ -38,7 +38,7 @@ export async function upgradePackageVersion({
   projectRoot?: string;
   doubleDiffCheck?: boolean;
 }) {
-  if (!waitingForUpgradePackage.relativeDir) {
+  if (typeof waitingForUpgradePackage.relativeDir === 'undefined') {
     throw new Error(`${waitingForUpgradePackage.relativeDir} is required`);
   }
 
@@ -162,7 +162,7 @@ export function generateDependOn({
 
   const item: IWaitingForUpgradePackage = {
     name: targetPackageName,
-    relativeDir: pkg?.relativeDir || 'unknown',
+    relativeDir: pkg?.relativeDir || '',
     diffFiles: pkg?.diffFiles || [],
     isDependOn: dependOnPkgNames,
   };

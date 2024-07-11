@@ -43,6 +43,8 @@ export default async function run(commandConfig: UserConfig) {
     waitingForUpgradePackages = await getWaitingForUpgradePackages(allPackages, depGraph, projectRoot);
   }
 
+
+
   if (!waitingForUpgradePackages.length) {
     vergoCliLogger.log('no packages need to be upgraded');
     return;

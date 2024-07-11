@@ -33,7 +33,7 @@ export default function initCommand(fnConfig: UserConfig) {
     .option('--no-beta', 'disable beta version')
     .option('-s, --set <version>', 'set version')
     .option('-m, --mainBranch <branch>', 'main branch')
-    .option('--analyze-deps', 'enable analyze dependencies', false)
+    .option('--analyze-deps', 'enable analyze dependencies', true)
     .option('--no-analyze-deps', 'disable analyze dependencies')
 
     .action(async (commandConfig: UserConfig) => {
